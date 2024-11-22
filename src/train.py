@@ -14,7 +14,9 @@ def train():
         [
             transforms.ToTensor(),
             transforms.RandomRotation(10),
-            transforms.RandomAffine(degrees=0, translate=(0.05, 0.05), scale=(0.95, 1.05)),
+            transforms.RandomAffine(
+                degrees=0, translate=(0.05, 0.05), scale=(0.95, 1.05)
+            ),
             transforms.Normalize((0.1307,), (0.3081,)),
         ]
     )
@@ -32,11 +34,7 @@ def train():
     print(f"Total parameters: {model.count_parameters()}")
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(
-        model.parameters(),
-        lr=0.003,
-        betas=(0.9, 0.999),
-        eps=1e-8,
-        weight_decay=0
+        model.parameters(), lr=0.003, betas=(0.9, 0.999), eps=1e-8, weight_decay=0
     )
     scheduler = optim.lr_scheduler.OneCycleLR(
         optimizer,
@@ -44,9 +42,9 @@ def train():
         epochs=1,
         steps_per_epoch=len(train_loader),
         pct_start=0.2,
-        anneal_strategy='linear',
+        anneal_strategy="linear",
         div_factor=10.0,
-        final_div_factor=10.0
+        final_div_factor=10.0,
     )
     total_step = len(train_loader)
     model.train()

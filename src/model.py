@@ -19,10 +19,7 @@ class MNISTNet(nn.Module):
 
         # Efficient classifier
         self.classifier = nn.Sequential(
-            nn.Linear(16 * 7 * 7, 128),
-            nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(128, 10)
+            nn.Linear(16 * 7 * 7, 128), nn.ReLU(), nn.Dropout(0.3), nn.Linear(128, 10)
         )
 
     def forward(self, x):
