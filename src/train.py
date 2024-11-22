@@ -49,7 +49,9 @@ def train():
         correct += (predicted == labels).sum().item()
         if (i + 1) % 100 == 0:
             accuracy = 100 * correct / total
-            print(f"Step [{i+1}/{total_step}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.2f}%")
+            print(
+                f"Step [{i+1}/{total_step}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.2f}%"
+            )
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     model_path = f"mnist_model_{timestamp}.pth"
     torch.save(model.state_dict(), model_path)
