@@ -5,48 +5,54 @@ class MNISTNet(nn.Module):
     def __init__(self):
         super(MNISTNet, self).__init__()
 
-        # First conv block
-        self.conv1 = nn.Conv2d(1, 16, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(16)
+        # First conv block - keep channels small initially
+        self.conv1 = nn.Conv2d(1, 8, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(8)
         self.relu1 = nn.ReLU()
         self.pool1 = nn.MaxPool2d(2)
-        self.dropout1 = nn.Dropout(0.25)
 
-        # Second conv block
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm2d(32)
+        # Second conv block - moderate increase in channels
+        self.conv2 = nn.Conv2d(8, 16, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(16)
         self.relu2 = nn.ReLU()
         self.pool2 = nn.MaxPool2d(2)
-        self.dropout2 = nn.Dropout(0.25)
 
-        # Third conv block for better feature extraction
-        self.conv3 = nn.Conv2d(32, 32, kernel_size=3, padding=1)
-        self.bn3 = nn.BatchNorm2d(32)
+        # Efficient feature mixer
+        self.conv3 = nn.Conv2d(16, 24, kernel_size=3, padding=1)
+        self.bn3 = nn.BatchNorm2d(24)
         self.relu3 = nn.ReLU()
-        self.dropout3 = nn.Dropout(0.25)
 
-        # Fully connected layer
-        self.fc = nn.Linear(32 * 7 * 7, 10)
+        # Global average pooling instead of large FC layer
+        self.global_pool = nn.AdaptiveAvgPool2d(1)
+
+        # Small FC layer
+        self.fc = nn.Linear(24, 10)
+
+        # Dropout for regularization
+        self.dropout = nn.Dropout(0.2)
 
     def forward(self, x):
+        # First block
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu1(x)
         x = self.pool1(x)
-        x = self.dropout1(x)
 
+        # Second block
         x = self.conv2(x)
         x = self.bn2(x)
         x = self.relu2(x)
         x = self.pool2(x)
-        x = self.dropout2(x)
 
+        # Feature mixer
         x = self.conv3(x)
         x = self.bn3(x)
         x = self.relu3(x)
-        x = self.dropout3(x)
 
-        x = x.view(-1, 32 * 7 * 7)
+        # Global pooling and final classification
+        x = self.global_pool(x)
+        x = x.view(-1, 24)
+        x = self.dropout(x)
         x = self.fc(x)
         return x
 
