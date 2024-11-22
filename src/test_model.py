@@ -14,7 +14,8 @@ def get_latest_model():
 
 def test_model_architecture():
     model = MNISTNet()
-    assert model.count_parameters() < 100000, "Model has too many parameters"
+    num_params = model.count_parameters()
+    assert num_params < 25000, f"Model has {num_params} parameters, should be less than 25000"
     test_input = torch.randn(1, 1, 28, 28)
     output = model(test_input)
     assert output.shape == (1, 10), "Output shape is incorrect"
@@ -45,7 +46,7 @@ def test_model_accuracy():
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
     accuracy = 100 * correct / total
-    assert accuracy > 80, f"Accuracy is only {accuracy}%"
+    assert accuracy > 95, f"Accuracy is only {accuracy:.2f}%, should be > 95%"
 
 
 if __name__ == "__main__":

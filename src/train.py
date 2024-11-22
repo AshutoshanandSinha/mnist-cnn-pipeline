@@ -17,12 +17,22 @@ def train():
         root="./data", train=True, transform=transform, download=True
     )
     train_loader = torch.utils.data.DataLoader(
-        dataset=train_dataset, batch_size=64, shuffle=True
+        dataset=train_dataset, batch_size=128, shuffle=True, num_workers=2
     )
     model = MNISTNet().to(device)
+    print(f"Total parameters: {model.count_parameters()}")
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters())
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    scheduler = optim.lr_scheduler.OneCycleLR(
+        optimizer,
+        max_lr=0.001,
+        epochs=1,
+        steps_per_epoch=len(train_loader)
+    )
     total_step = len(train_loader)
+    model.train()
+    correct = 0
+    total = 0
     for i, (images, labels) in enumerate(train_loader):
         images = images.to(device)
         labels = labels.to(device)
@@ -31,8 +41,13 @@ def train():
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        scheduler.step()
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
         if (i + 1) % 100 == 0:
-            print(f"Step [{i+1}/{total_step}], Loss: {loss.item():.4f}")
+            accuracy = 100 * correct / total
+            print(f"Step [{i+1}/{total_step}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.2f}%")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     model_path = f"mnist_model_{timestamp}.pth"
     torch.save(model.state_dict(), model_path)
