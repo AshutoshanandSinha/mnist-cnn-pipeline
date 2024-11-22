@@ -1,0 +1,7 @@
+torch>=1.9.0
+torchvision>=0.10.0
+pytest>=6.2.0
+numpy>=1.19.0
+flake8>=3.9.0
+black>=22.3.0
+isort>=5.9.0
