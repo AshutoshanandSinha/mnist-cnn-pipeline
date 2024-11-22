@@ -13,8 +13,8 @@ def train():
     transform = transforms.Compose(
         [
             transforms.ToTensor(),
-            transforms.RandomRotation(15),
-            transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.9, 1.1)),
+            transforms.RandomRotation(10),
+            transforms.RandomAffine(degrees=0, translate=(0.05, 0.05), scale=(0.95, 1.05)),
             transforms.Normalize((0.1307,), (0.3081,)),
         ]
     )
@@ -23,7 +23,7 @@ def train():
     )
     train_loader = torch.utils.data.DataLoader(
         dataset=train_dataset,
-        batch_size=128,
+        batch_size=32,
         shuffle=True,
         num_workers=2,
         pin_memory=True,
@@ -31,18 +31,22 @@ def train():
     model = MNISTNet().to(device)
     print(f"Total parameters: {model.count_parameters()}")
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(
-        model.parameters(), lr=0.01, momentum=0.9, nesterov=True, weight_decay=1e-4
+    optimizer = optim.Adam(
+        model.parameters(),
+        lr=0.003,
+        betas=(0.9, 0.999),
+        eps=1e-8,
+        weight_decay=0
     )
     scheduler = optim.lr_scheduler.OneCycleLR(
         optimizer,
-        max_lr=0.1,
+        max_lr=0.003,
         epochs=1,
         steps_per_epoch=len(train_loader),
-        pct_start=0.1,
-        anneal_strategy="cos",
+        pct_start=0.2,
+        anneal_strategy='linear',
         div_factor=10.0,
-        final_div_factor=100.0,
+        final_div_factor=10.0
     )
     total_step = len(train_loader)
     model.train()
@@ -55,6 +59,7 @@ def train():
         loss = criterion(outputs, labels)
         optimizer.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
         scheduler.step()
         _, predicted = torch.max(outputs.data, 1)
