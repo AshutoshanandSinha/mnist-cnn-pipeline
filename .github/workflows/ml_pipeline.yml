@@ -73,39 +73,3 @@ jobs:
         name: trained-model
         path: mnist_model_*.pth
         retention-days: 5
-
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
-    steps:
-    - name: Download model artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: trained-model
-
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: model-${{ github.sha }}
-        release_name: Model Release ${{ github.sha }}
-        body: |
-          Automated model release
-          Commit: ${{ github.sha }}
-          Workflow: ${{ github.workflow }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./mnist_model_*.pth
-        asset_name: mnist_model.pth
-        asset_content_type: application/octet-stream
