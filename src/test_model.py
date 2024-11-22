@@ -15,7 +15,9 @@ def get_latest_model():
 def test_model_architecture():
     model = MNISTNet()
     num_params = model.count_parameters()
-    assert num_params < 25000, f"Model has {num_params} parameters, should be less than 25000"
+    assert (
+        num_params < 25000
+    ), f"Model has {num_params} parameters, should be less than 25000"
     test_input = torch.randn(1, 1, 28, 28)
     output = model(test_input)
     assert output.shape == (1, 10), "Output shape is incorrect"
