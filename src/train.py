@@ -14,9 +14,7 @@ def train():
         [
             transforms.ToTensor(),
             transforms.RandomAffine(
-                degrees=15,
-                translate=(0.1, 0.1),
-                scale=(0.85, 1.15)
+                degrees=15, translate=(0.1, 0.1), scale=(0.85, 1.15)
             ),
             transforms.Normalize((0.1307,), (0.3081,)),
         ]
@@ -34,16 +32,9 @@ def train():
     model = MNISTNet().to(device)
     print(f"Total parameters: {model.count_parameters()}")
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(
-        model.parameters(),
-        lr=0.001,
-        weight_decay=0.01
-    )
+    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.01)
     scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
-        optimizer,
-        T_0=len(train_loader) // 3,
-        T_mult=1,
-        eta_min=1e-6
+        optimizer, T_0=len(train_loader) // 3, T_mult=1, eta_min=1e-6
     )
     total_step = len(train_loader)
     model.train()
