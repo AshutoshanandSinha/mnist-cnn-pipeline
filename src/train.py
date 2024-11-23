@@ -13,8 +13,11 @@ def train():
     transform = transforms.Compose(
         [
             transforms.ToTensor(),
-            transforms.RandomRotation(10),
-            transforms.RandomAffine(degrees=0, translate=(0.05, 0.05), scale=(0.95, 1.05)),
+            transforms.RandomAffine(
+                degrees=15,
+                translate=(0.1, 0.1),
+                scale=(0.85, 1.15)
+            ),
             transforms.Normalize((0.1307,), (0.3081,)),
         ]
     )
@@ -23,7 +26,7 @@ def train():
     )
     train_loader = torch.utils.data.DataLoader(
         dataset=train_dataset,
-        batch_size=32,
+        batch_size=64,
         shuffle=True,
         num_workers=2,
         pin_memory=True,
@@ -31,22 +34,16 @@ def train():
     model = MNISTNet().to(device)
     print(f"Total parameters: {model.count_parameters()}")
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(
+    optimizer = optim.AdamW(
         model.parameters(),
-        lr=0.003,
-        betas=(0.9, 0.999),
-        eps=1e-8,
-        weight_decay=0
+        lr=0.001,
+        weight_decay=0.01
     )
-    scheduler = optim.lr_scheduler.OneCycleLR(
+    scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
         optimizer,
-        max_lr=0.003,
-        epochs=1,
-        steps_per_epoch=len(train_loader),
-        pct_start=0.2,
-        anneal_strategy='linear',
-        div_factor=10.0,
-        final_div_factor=10.0
+        T_0=len(train_loader) // 3,
+        T_mult=1,
+        eta_min=1e-6
     )
     total_step = len(train_loader)
     model.train()
