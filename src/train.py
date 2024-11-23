@@ -1,5 +1,5 @@
-from datetime import datetime
 import math
+from datetime import datetime
 
 import torch
 import torch.nn as nn
@@ -11,26 +11,25 @@ from model import SimpleMNISTNet  # Updated to use a simplified model
 
 
 def train():
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Enhanced transforms
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.RandomAffine(
-            degrees=10,  # Reduced rotation
-            translate=(0.1, 0.1),
-            scale=(0.9, 1.1),
-            shear=5  # Reduced shear
-        ),
-        transforms.RandomErasing(p=0.1),  # Reduced erasing
-        transforms.Normalize((0.1307,), (0.3081,))
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.RandomAffine(
+                degrees=10,  # Reduced rotation
+                translate=(0.1, 0.1),
+                scale=(0.9, 1.1),
+                shear=5,  # Reduced shear
+            ),
+            transforms.RandomErasing(p=0.1),  # Reduced erasing
+            transforms.Normalize((0.1307,), (0.3081,)),
+        ]
+    )
 
     train_dataset = datasets.MNIST(
-        root='./data',
-        train=True,
-        transform=transform,
-        download=True
+        root="./data", train=True, transform=transform, download=True
     )
 
     train_loader = torch.utils.data.DataLoader(
@@ -38,7 +37,7 @@ def train():
         batch_size=128,  # Increased from 64 to 128
         shuffle=True,
         num_workers=2,
-        pin_memory=True
+        pin_memory=True,
     )
 
     model = SimpleMNISTNet().to(device)
@@ -51,7 +50,7 @@ def train():
         model.parameters(),
         lr=0.002,  # Reduced from 0.003
         weight_decay=0.001,  # Reduced weight decay
-        betas=(0.9, 0.999)
+        betas=(0.9, 0.999),
     )
 
     # Custom learning rate schedule
@@ -64,7 +63,9 @@ def train():
         else:
             # Even gentler cosine decay
             progress = (step - warmup_steps) / (total_steps - warmup_steps)
-            return 0.002 * (0.4 + 0.6 * (1 + math.cos(math.pi * progress)) / 2)  # minimum LR will be 40% of max_lr
+            return 0.002 * (
+                0.4 + 0.6 * (1 + math.cos(math.pi * progress)) / 2
+            )  # minimum LR will be 40% of max_lr
 
     # Initialize tracking variables before the loop
     running_loss = 0.0
@@ -73,12 +74,12 @@ def train():
     best_acc = 0.0
 
     # Training loop modifications
-    progress_bar = tqdm(train_loader, desc='Training')
+    progress_bar = tqdm(train_loader, desc="Training")
     for i, (images, labels) in enumerate(progress_bar):
         # Update learning rate
         lr = get_lr(i)
         for param_group in optimizer.param_groups:
-            param_group['lr'] = lr
+            param_group["lr"] = lr
 
         images = images.to(device)
         labels = labels.to(device)
@@ -104,11 +105,13 @@ def train():
         accuracy = 100 * correct / total
 
         # Update progress bar with current learning rate
-        progress_bar.set_postfix({
-            'Loss': running_loss,
-            'Accuracy': accuracy,
-            'LR': optimizer.param_groups[0]['lr']
-        })
+        progress_bar.set_postfix(
+            {
+                "Loss": running_loss,
+                "Accuracy": accuracy,
+                "LR": optimizer.param_groups[0]["lr"],
+            }
+        )
 
         # Track best accuracy
         if accuracy > best_acc:
@@ -118,7 +121,7 @@ def train():
         if i == total_steps // 2:  # Midway through training
             # Reduce weight decay
             for param_group in optimizer.param_groups:
-                param_group['weight_decay'] = 0.005
+                param_group["weight_decay"] = 0.005
 
     training_loss = running_loss / total_steps
     print(
@@ -127,11 +130,11 @@ def train():
         f"Best Accuracy: {best_acc:.2f}%"
     )
 
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    model_path = f'mnist_model_{timestamp}.pth'
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    model_path = f"mnist_model_{timestamp}.pth"
     torch.save(model.state_dict(), model_path)
     return model_path
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     train()
