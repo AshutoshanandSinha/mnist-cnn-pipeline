@@ -5,7 +5,7 @@ This project implements a CNN model for MNIST digit classification with a comple
 ## Project Structure
 
 ```
-assignment5/
+mnist-cnn-pipeline/
 ├── src/
 │   ├── model.py         # Contains SimpleMNISTNet architecture
 │   ├── train.py         # Training script with optimizations
