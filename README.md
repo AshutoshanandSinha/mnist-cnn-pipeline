@@ -1,189 +1,82 @@
-# Machine Learning CI/CD Pipeline
+# MNIST Model Training Pipeline
 
-This project demonstrates a basic CI/CD pipeline for machine learning projects, including model training, testing, validation, and deployment.
+This project implements a CNN model for MNIST digit classification with a complete training and testing pipeline.
 
 ## Project Structure
 
 ```
-project/
-├── .github/
-│   └── workflows/
-│       └── ml_pipeline.yml
+assignment5/
 ├── src/
-│   ├── model.py
-│   ├── train.py
-│   └── test_model.py
+│   ├── model.py         # Contains SimpleMNISTNet architecture
+│   ├── train.py         # Training script with optimizations
+│   └── test_model.py    # Test suite for model validation
 ├── requirements.txt
 └── README.md
 ```
 
+## Model Architecture
+
+The project uses `SimpleMNISTNet`, a CNN architecture with:
+- Residual blocks
+- Batch normalization
+- Dropout regularization
+- Less than 25,000 parameters
+- Target accuracy > 95% on MNIST test set
+
 ## Usage
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/your-repo.git
-   ```
-
-2. Install dependencies:
+1. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Run the tests:
+2. Train the model:
    ```bash
-   pytest tests/
+   python src/train.py
    ```
 
-4. Train the model:
+3. Test the model:
    ```bash
-   python src/train_model.py
+   python src/test_model.py
    ```
-
-5. Validate the model:
-   ```bash
-   python src/validate_model.py
-   ```
-
-6. Deploy the model:
-   ```bash
-   python src/deploy_model.py
-   ```
-
-## GitHub Actions
-
-The CI/CD pipeline is defined in `.github/workflows/ml_pipeline.yml`. This workflow includes steps for testing, model validation, and deployment.
 
 ## Requirements
 
-Create `requirements.txt`:
-
+The project requires the following packages:
 ```
-scikit-learn>=0.24.0
-pandas>=1.2.0
-numpy>=1.19.0
+torch>=1.9.0
+torchvision>=0.10.0
 pytest>=6.2.0
+numpy>=1.19.0
+flake8>=3.9.0
+black>=22.3.0
+isort>=5.9.0
+tqdm>=4.65.0
 ```
 
-## Best Practices
+## Training Features
 
-1. **Version Control**
-   - Use Git for code and model versioning
-   - Maintain clear commit messages
-   - Use feature branches
+- AdamW optimizer with learning rate scheduling
+- Data augmentation (rotation, translation, random erasing)
+- Label smoothing
+- Gradient clipping
+- Learning rate warmup and cosine decay
+- Automatic model checkpointing
 
-2. **Testing**
-   - Write comprehensive unit tests
-   - Include integration tests
-   - Implement performance testing
+## Testing
 
-3. **Monitoring**
-   - Track model performance metrics
-   - Monitor data drift
-   - Set up alerting for issues
+The test suite validates:
+- Model architecture (parameter count < 25,000)
+- Output shape correctness
+- Model accuracy (>95% on test set)
 
-4. **Documentation**
-   - Maintain clear documentation
-   - Document model parameters
-   - Keep deployment instructions updated
+## Model Artifacts
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
+Trained models are saved with timestamp in the format:
+```
+mnist_model_YYYYMMDD_HHMMSS.pth
+```
 
 ## License
 
 MIT License
-
-## CI/CD Pipeline
-
-The pipeline is automated using GitHub Actions and includes:
-
-1. **Continuous Integration**
-   - Automated testing on each push
-   - Code quality checks
-   - Unit test execution
-
-2. **Continuous Deployment**
-   - Model validation
-   - Automated deployment to staging
-   - Production deployment with manual approval
-
-## Example GitHub Actions Workflow
-
-Create `.github/workflows/ml_pipeline.yml`:
-
-```
-name: ML Pipeline
-
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    
-    - name: Run tests
-      run: python src/test_model.py
-    
-    - name: Validate model
-      run: python src/validate.py
-    
-    - name: Deploy to staging
-      if: github.ref == 'refs/heads/main'
-      run: python src/deploy.py --environment staging
-```
-
-## Requirements
-
-Create `requirements.txt`:
-```
-scikit-learn>=0.24.0
-pandas>=1.2.0
-numpy>=1.19.0
-pytest>=6.2.0
-```
-
-## Best Practices
-
-1. **Version Control**
-   - Use Git for code and model versioning
-   - Maintain clear commit messages
-   - Use feature branches
-
-2. **Testing**
-   - Write comprehensive unit tests
-   - Include integration tests
-   - Implement performance testing
-
-3. **Monitoring**
-   - Track model performance metrics
-   - Monitor data drift
-   - Set up alerting for issues
-
-4. **Documentation**
-   - Maintain clear documentation
-   - Document model parameters
-   - Keep deployment instructions updated
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
-
-## License
-
-MIT License
-
