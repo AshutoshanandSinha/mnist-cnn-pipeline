@@ -4,7 +4,7 @@ import pytest
 import torch
 from torchvision import datasets, transforms
 
-from model import MNISTNet
+from model import SimpleMNISTNet as MNISTNet
 
 
 def get_latest_model():
