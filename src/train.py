@@ -121,7 +121,11 @@ def train():
                 param_group['weight_decay'] = 0.005
 
     training_loss = running_loss / total_steps
-    print(f"Training Loss: {training_loss:.4f}, Final Accuracy: {accuracy:.2f}%, Best Accuracy: {best_acc:.2f}%")
+    print(
+        f"Training Loss: {training_loss:.4f}, "
+        f"Final Accuracy: {accuracy:.2f}%, "
+        f"Best Accuracy: {best_acc:.2f}%"
+    )
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     model_path = f'mnist_model_{timestamp}.pth'
