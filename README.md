@@ -38,16 +38,83 @@ Total Parameters: 12,534
 ## Results
 
 The model achieved:
-- Test Accuracy: 99.40%
-- Training Time: 14 epochs
+- Test Accuracy: 99.41%
+- Training Time: 10 epochs
 - Early Stopping: Triggered upon reaching target accuracy
 
-## Training Progress
+### Model Architecture Details
+```
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1            [-1, 8, 26, 26]              72
+       BatchNorm2d-2            [-1, 8, 26, 26]              16
+              ReLU-3            [-1, 8, 26, 26]               0
+            Conv2d-4           [-1, 12, 24, 24]             864
+       BatchNorm2d-5           [-1, 12, 24, 24]              24
+              ReLU-6           [-1, 12, 24, 24]               0
+            Conv2d-7           [-1, 16, 22, 22]           1,728
+       BatchNorm2d-8           [-1, 16, 22, 22]              32
+              ReLU-9           [-1, 16, 22, 22]               0
+           Conv2d-10           [-1, 20, 20, 20]           2,880
+      BatchNorm2d-11           [-1, 20, 20, 20]              40
+             ReLU-12           [-1, 20, 20, 20]               0
+         MaxPool2d-13           [-1, 20, 10, 10]               0
+           Conv2d-14           [-1, 12, 10, 10]             252
+      BatchNorm2d-15           [-1, 12, 10, 10]              24
+             ReLU-16           [-1, 12, 10, 10]               0
+           Conv2d-17           [-1, 16, 10, 10]           1,728
+      BatchNorm2d-18           [-1, 16, 10, 10]              32
+             ReLU-19           [-1, 16, 10, 10]               0
+           Conv2d-20           [-1, 16, 10, 10]           2,304
+      BatchNorm2d-21           [-1, 16, 10, 10]              32
+             ReLU-22           [-1, 16, 10, 10]               0
+           Conv2d-23           [-1, 16, 10, 10]           2,304
+      BatchNorm2d-24           [-1, 16, 10, 10]              32
+             ReLU-25           [-1, 16, 10, 10]               0
+AdaptiveAvgPool2d-26             [-1, 16, 1, 1]               0
+           Conv2d-27             [-1, 10, 1, 1]             170
+================================================================
+Total params: 12,534
+Trainable params: 12,534
+Non-trainable params: 0
+----------------------------------------------------------------
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.80
+Params size (MB): 0.05
+Estimated Total Size (MB): 0.85
+----------------------------------------------------------------
+```
 
-Epoch 1 - Loss: 1.9788, Accuracy: 42.24%, Test: 75.45%
-Epoch 5 - Loss: 0.5840, Accuracy: 98.39%, Test: 98.80%
-Epoch 10 - Loss: 0.5509, Accuracy: 99.04%, Test: 99.18%
-Epoch 14 - Loss: 0.5417, Accuracy: 99.23%, Test: 99.40%
+### Parameter Distribution
+```
+Model Parameter Summary:
+----------------------------------------
+block1 Parameters: 88
+block2 Parameters: 888
+block3 Parameters: 1,760
+block4 Parameters: 2,920
+block5 Parameters: 0
+block6 Parameters: 276
+block7 Parameters: 1,760
+block8 Parameters: 2,336
+block9 Parameters: 2,336
+block10 Parameters: 0
+block11 Parameters: 170
+----------------------------------------
+Total Parameters: 12,534
+----------------------------------------
+```
+
+## Training Progress
+```
+Epoch 1  - Loss: 1.9699, Accuracy: 38.86%, Test: 70.76%
+Epoch 2  - Loss: 1.2410, Accuracy: 84.32%, Test: 96.23%
+Epoch 3  - Loss: 0.7078, Accuracy: 96.79%, Test: 97.84%
+Epoch 5  - Loss: 0.5847, Accuracy: 98.37%, Test: 98.74%
+Epoch 8  - Loss: 0.5599, Accuracy: 98.89%, Test: 99.32%
+Epoch 10 - Loss: 0.5513, Accuracy: 99.12%, Test: 99.41%
+```
 
 ## Key Features
 
